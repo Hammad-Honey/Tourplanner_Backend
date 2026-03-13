@@ -6,11 +6,10 @@ app.use(cookieParser());
 app.use(express.json());
 const port = process.env.APP_PORT;
 //Routes
-const AuthRoutes= require('./routes/authRoutes')
+const authApis= require('./routes/authRoutes')
 //Database
-const DB=require('./config/db')
-
-DB();
+const connectDB=require('./config/db')
+connectDB();
 
 app.use(cors({
     origin: ['http://localhost:5173'],
@@ -21,7 +20,7 @@ app.get('/',(req,res)=>{
     res.json({appName:'Tour Planner Backed', status:'Running', listeningPort:'3000'})
 })
 
-app.use('/api/auth',AuthRoutes)
+app.use('/api/auth',authApis)
 app.use('/api/edit_profile', (req,res)=>{res.send("Hello World")})
 
 app.listen(port,()=>{
