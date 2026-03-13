@@ -1,5 +1,5 @@
-const jwt = require('../utils/generateToken');
-const User = require('../models/user');
+const jwt = require("jsonwebtoken");
+
 
 const authWithToken = (req, res, next) => {
     const token = req.cookies.token;
@@ -10,7 +10,7 @@ const authWithToken = (req, res, next) => {
 
     try {
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        req.userId = decoded;
+        req.userId = decoded.id;
         next();
     }
     catch (err) {
@@ -18,4 +18,4 @@ const authWithToken = (req, res, next) => {
     }
 }
 
-module.exports = { authWithToken }
+module.exports = authWithToken 

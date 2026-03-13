@@ -5,12 +5,19 @@ const cookieParser = require("cookie-parser");
 app.use(cookieParser());
 app.use(express.json());
 const port = process.env.APP_PORT;
+
 //Routes
 const authApis= require('./routes/authRoutes')
+
 //Database
 const connectDB=require('./config/db')
 connectDB();
 
+
+//Middlewares
+const authTokenMiddleware=require('./middleware/authWithToken')
+
+//Other Middlewares
 app.use(cors({
     origin: ['http://localhost:5173'],
 }));
@@ -21,7 +28,10 @@ app.get('/',(req,res)=>{
 })
 
 app.use('/api/auth',authApis)
-app.use('/api/edit_profile', (req,res)=>{res.send("Hello World")})
+app.use('/api/edit_profile',authTokenMiddleware, (req,res)=>{
+    
+    res.status(200).json({message:"Authanticated datta accessed", request:{req}}) 
+})
 
 app.listen(port,()=>{
     console.log(`Server is running at  http://localhost:${port}`);

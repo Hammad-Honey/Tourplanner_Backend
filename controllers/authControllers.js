@@ -30,7 +30,6 @@ const login = async (req, res) => {
         }
 
         const token = generateToken(user._id);
-
         // Send token in cookie
         res.cookie("token", token, {
             httpOnly: true,
