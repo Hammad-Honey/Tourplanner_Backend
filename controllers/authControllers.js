@@ -1,19 +1,26 @@
-const User = require('../models/user')
-const bcrypt = require("bcryptjs")
+const User = require('../models/user');
+const bcrypt = require("bcryptjs");
+const generateToken = require('../utils/generateToken')
 
 
 const login = async (req, res) => {
+    let user = null;
     try {
-        const { emailOrUname } = req.body
-        console.log(emailOrUname)
-        const user = await User.findOne({ email: emailOrUname } || { userName: emailOrUname });
-        const inputPass=req.body.password
-        console.log("input pass", inputPass)
+        const { emailOrUname } = req.body;
+        const inputPass = req.body.password;
 
-        const compare = await bcrypt.compare(inputPass,user.password);
-        console.log(compare)
-    
-        console.log(user)
+        console.log("Email or uname : ", emailOrUname)
+        console.log("password", req.body.password)
+
+        // Checking if user enters Email or Username
+        if (emailOrUname.includes('@')) {
+            user = await User.findOne({ email: emailOrUname });
+        }
+        else {
+            user = await User.findOne({ userName: emailOrUname });
+        }
+
+        const compare = await bcrypt.compare(inputPass, user.password);
 
         if (!user) {
             return res.status(404).json({ error: "Email or UserName Not Valid" })
@@ -22,8 +29,23 @@ const login = async (req, res) => {
             return res.status(401).json({ success: false, message: "invalid user Password" })
         }
 
-        res.status(200);
-        res.json({status:"Success", name:user.userName, session:""})
+        const token = generateToken(user._id);
+
+        // Send token in cookie
+        res.cookie("token", token, {
+            httpOnly: true,
+            secure: false, // change to true in production
+            sameSite: "strict",
+            maxAge: 1000 * 60 * 60 * 24
+        });
+
+        res.status(200).json({
+            status: "Success",
+            id: user._id,
+            name: user.userName,
+            email: user.email,
+        })
+
         console.log(user)
 
     }
