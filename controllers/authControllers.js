@@ -5,6 +5,7 @@ const generateToken = require('../utils/generateToken')
 
 const login = async (req, res) => {
     let user = null;
+    let compare =null;
     try {
         const { emailOrUname } = req.body;
         const inputPass = req.body.password;
@@ -19,8 +20,10 @@ const login = async (req, res) => {
         else {
             user = await User.findOne({ userName: emailOrUname });
         }
+        if (user) {
+            compare = await bcrypt.compare(inputPass, user.password);
+        }
 
-        const compare = await bcrypt.compare(inputPass, user.password);
 
         if (!user) {
             return res.status(404).json({ error: "Email or UserName Not Valid" })

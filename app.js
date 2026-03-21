@@ -2,6 +2,7 @@ const express = require('express');
 const app = express();
 const cors = require('cors');
 const cookieParser = require("cookie-parser");
+const logger=require('./middleware/logger')
 app.use(cookieParser());
 app.use(express.json());
 const port = process.env.APP_PORT;
@@ -20,7 +21,11 @@ const authTokenMiddleware=require('./middleware/authWithToken')
 //Other Middlewares
 app.use(cors({
     origin: ['http://localhost:5173'],
+    credentials:true,
+    methods:["GET","POST"]
 }));
+app.use(logger)
+
 
 app.get('/',(req,res)=>{
     res.status(200)

@@ -4,7 +4,7 @@ const { login, signup }=controllers
 const router=express.Router();
 
 
-router.get('/login',login);
+router.post('/login',login);
 router.post('/signup',signup);
 
 
