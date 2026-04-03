@@ -22,7 +22,7 @@ const authTokenMiddleware=require('./middleware/authWithToken')
 app.use(cors({
     origin: ['http://localhost:5173'],
     credentials:true,
-    methods:["GET","POST"]
+    methods:["*"]
 }));
 app.use(logger)
 
@@ -35,7 +35,7 @@ app.get('/',(req,res)=>{
 app.use('/api/auth',authApis)
 app.use('/api/edit_profile',authTokenMiddleware, (req,res)=>{
     
-    res.status(200).json({message:"Authanticated datta accessed", request:{req}}) 
+    res.status(200).json({message:"Authanticated n data accessed", request:{req}}) 
 })
 
 app.listen(port,()=>{
